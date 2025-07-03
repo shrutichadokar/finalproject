@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cancel Parcel Booking - Customer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #1e3c72, #2a5298);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 1rem;
+    }
+
+    .top-bar button {
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      font-weight: bold;
+      background-color: #ff9900;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .top-bar button:hover {
+      background-color: #e68a00;
+    }
+
+    h2 {
+      margin-bottom: 2rem;
+    }
+
+    input {
+      padding: 0.6rem;
+      width: 300px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: none;
+      margin-bottom: 1rem;
+    }
+
+    button {
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      font-weight: bold;
+      background-color: #ffcc00;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .message {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    .success {
+      color: #00ff00;
+    }
+
+    .error {
+      color: #ff4d4d;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <button onclick="location.href='customer-dashboard.html'">Back to Dashboard</button>
+  </div>
+
+  <h2>Cancel Your Booking</h2>
+  <p>Enter your Booking ID to cancel your parcel (Only 'Booked' parcels can be cancelled)</p>
+
+  <input type="text" id="bookingIdInput" placeholder="Enter Booking ID (e.g. BKG1001)" />
+  <br />
+  <button onclick="cancelBooking()">Cancel Booking</button>
+
+  <div id="message" class="message"></div>
+
+  <script>
+    // Sample bookings database (simulation)
+    const bookings = {
+      "BKG1001": { status: "Booked", customerId: "CUST0001" },
+      "BKG1002": { status: "In Transit", customerId: "CUST0002" },
+      "BKG1003": { status: "Booked", customerId: "CUST0003" },
+      "BKG1004": { status: "Delivered", customerId: "CUST0004" }
+    };
+
+    function cancelBooking() {
+      const bookingId = document.getElementById("bookingIdInput").value.trim().toUpperCase();
+      const messageDiv = document.getElementById("message");
+
+      if (!bookingId || !bookings[bookingId]) {
+        messageDiv.textContent = "Booking cancel failed, incorrect Booking ID.";
+        messageDiv.className = "message error";
+        return;
+      }
+
+      const booking = bookings[bookingId];
+
+      if (booking.status !== "Booked") {
+        messageDiv.textContent = `Only bookings with status 'Booked' can be cancelled. Current status: ${booking.status}`;
+        messageDiv.className = "message error";
+        return;
+      }
+
+      // Soft cancel
+      booking.status = "Cancelled";
+
+      messageDiv.textContent = `Booking cancelled successfully. Booking ID: ${bookingId}`;
+      messageDiv.className = "message success";
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Officer Parcel Tracking - A1 Parcel Pvt. Ltd.</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      padding: 2rem;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .form {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    input[type="text"] {
+      padding: 0.6rem;
+      border-radius: 5px;
+      border: none;
+      width: 300px;
+      font-size: 1rem;
+    }
+    button {
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      background-color: #ffcc00;
+      color: black;
+      margin-left: 1rem;
+    }
+    .table-container {
+      max-width: 850px;
+      margin: 0 auto;
+      background: white;
+      color: black;
+      padding: 1rem;
+      border-radius: 10px;
+      display: none;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      padding: 0.8rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    .error {
+      color: #ff4d4d;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Officer - Track Any Parcel</h2>
+
+  <div class="form">
+    <input type="text" id="bookingId" placeholder="Enter Booking ID" />
+    <button onclick="trackParcel()">Track</button>
+    <div class="error" id="errorMsg"></div>
+  </div>
+
+  <div class="table-container" id="resultContainer">
+    <h3>Tracking Information</h3>
+    <table>
+      <tr><th>Booking ID</th><td id="tBookingId"></td></tr>
+      <tr><th>Customer Full Name</th><td id="tFullName"></td></tr>
+      <tr><th>Customer Address</th><td id="tAddress"></td></tr>
+      <tr><th>Receiver Name</th><td id="tReceiverName"></td></tr>
+      <tr><th>Receiver Address</th><td id="tReceiverAddress"></td></tr>
+      <tr><th>Date of Booking</th><td id="tBookingDate"></td></tr>
+      <tr><th>Parcel Status</th><td id="tParcelStatus"></td></tr>
+    </table>
+  </div>
+
+  <script>
+    function trackParcel() {
+      const bookingId = document.getElementById("bookingId").value.trim().toUpperCase();
+      const errorMsg = document.getElementById("errorMsg");
+      const resultContainer = document.getElementById("resultContainer");
+
+      // Sample mock data - replace with real backend fetch if needed
+      const allBookings = {
+        "BKG123456": {
+          bookingId: "BKG123456",
+          fullName: "Vivek Tiwari",
+          address: "A1 Nagar, Indore, MP",
+          receiverName: "Rahul Mehta",
+          receiverAddress: "Sector 21, Noida, UP",
+          bookingDate: "2025-07-04",
+          parcelStatus: "Booked"
+        },
+        "BKG789012": {
+          bookingId: "BKG789012",
+          fullName: "Sneha Roy",
+          address: "Hinjewadi, Pune, MH",
+          receiverName: "Neha Singh",
+          receiverAddress: "Wakad, Pune, MH",
+          bookingDate: "2025-07-02",
+          parcelStatus: "In Transit"
+        },
+        "BKG112233": {
+          bookingId: "BKG112233",
+          fullName: "Naman Sharma",
+          address: "Andheri East, Mumbai, MH",
+          receiverName: "Aarav Kapoor",
+          receiverAddress: "Park Street, Kolkata, WB",
+          bookingDate: "2025-07-01",
+          parcelStatus: "Delivered"
+        }
+      };
+
+      const data = allBookings[bookingId];
+
+      if (!data) {
+        resultContainer.style.display = "none";
+        errorMsg.textContent = "No record found for Booking ID: " + bookingId;
+        return;
+      }
+
+      errorMsg.textContent = "";
+      document.getElementById("tBookingId").textContent = data.bookingId;
+      document.getElementById("tFullName").textContent = data.fullName;
+      document.getElementById("tAddress").textContent = data.address;
+      document.getElementById("tReceiverName").textContent = data.receiverName;
+      document.getElementById("tReceiverAddress").textContent = data.receiverAddress;
+      document.getElementById("tBookingDate").textContent = data.bookingDate;
+      document.getElementById("tParcelStatus").textContent = data.parcelStatus;
+
+      resultContainer.style.display = "block";
+    }
+  </script>
+
+</body>
+</html>

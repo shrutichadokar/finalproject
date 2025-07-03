@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Delivery Status - Officer Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      padding: 2rem;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .form {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    input, select {
+      padding: 0.6rem;
+      border-radius: 5px;
+      border: none;
+      width: 300px;
+      font-size: 1rem;
+      margin: 0.5rem 0;
+    }
+    button {
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      background-color: #ffcc00;
+      color: black;
+      margin-top: 1rem;
+    }
+    .table-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      color: black;
+      padding: 1rem;
+      border-radius: 10px;
+      display: none;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      padding: 0.8rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    .error, .success {
+      text-align: center;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    .error {
+      color: #ff4d4d;
+    }
+    .success {
+      color: #33cc33;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Delivery Status Update - Officer Panel</h2>
+
+  <div class="form">
+    <input type="text" id="bookingId" placeholder="Enter Booking ID" />
+    <button onclick="loadStatus()">Load Status</button>
+    <div id="message" class=""></div>
+  </div>
+
+  <div class="table-container" id="statusContainer">
+    <h3>Parcel Details</h3>
+    <table>
+      <tr><th>Booking ID</th><td id="bId"></td></tr>
+      <tr><th>Customer Name</th><td id="fullName"></td></tr>
+      <tr><th>Customer Address</th><td id="address"></td></tr>
+      <tr><th>Receiver Name</th><td id="recName"></td></tr>
+      <tr><th>Receiver Address</th><td id="recAddress"></td></tr>
+      <tr><th>Date of Booking</th><td id="dateBook"></td></tr>
+      <tr><th>Current Parcel Status</th><td id="statusVal"></td></tr>
+    </table>
+
+    <h4>Update Parcel Status</h4>
+    <select id="newStatus">
+      <option value="">-- Select New Status --</option>
+      <option>New</option>
+      <option>Scheduled</option>
+      <option>PickedUp</option>
+      <option>Assigned</option>
+      <option>Booked</option>
+      <option>In Transit</option>
+      <option>Delivered</option>
+      <option>Cancelled</option>
+    </select><br>
+    <button onclick="updateStatus()">Update Status</button>
+  </div>
+
+  <script>
+    const bookingDB = {
+      "BKG123456": {
+        bookingId: "BKG123456",
+        fullName: "Vivek Tiwari",
+        address: "A1 Nagar, Indore",
+        receiverName: "Rahul Mehta",
+        receiverAddress: "Noida, UP",
+        bookingDate: "2025-07-04",
+        parcelStatus: "New",
+        paymentDone: false // Important for validation
+      },
+      "BKG789012": {
+        bookingId: "BKG789012",
+        fullName: "Sneha Roy",
+        address: "Pune, MH",
+        receiverName: "Neha Singh",
+        receiverAddress: "Wakad, Pune",
+        bookingDate: "2025-07-03",
+        parcelStatus: "In Transit",
+        paymentDone: true
+      }
+    };
+
+    let currentId = "";
+
+    function loadStatus() {
+      const bookingId = document.getElementById("bookingId").value.trim().toUpperCase();
+      const message = document.getElementById("message");
+      const container = document.getElementById("statusContainer");
+
+      if (!bookingDB[bookingId]) {
+        message.textContent = "Booking ID not found.";
+        message.className = "error";
+        container.style.display = "none";
+        return;
+      }
+
+      currentId = bookingId;
+      const data = bookingDB[bookingId];
+      document.getElementById("bId").textContent = data.bookingId;
+      document.getElementById("fullName").textContent = data.fullName;
+      document.getElementById("address").textContent = data.address;
+      document.getElementById("recName").textContent = data.receiverName;
+      document.getElementById("recAddress").textContent = data.receiverAddress;
+      document.getElementById("dateBook").textContent = data.bookingDate;
+      document.getElementById("statusVal").textContent = data.parcelStatus;
+
+      message.textContent = "";
+      message.className = "";
+      container.style.display = "block";
+    }
+
+    function updateStatus() {
+      const newStatus = document.getElementById("newStatus").value;
+      const message = document.getElementById("message");
+
+      if (!currentId || !newStatus) {
+        message.textContent = "Please select a status to update.";
+        message.className = "error";
+        return;
+      }
+
+      const parcel = bookingDB[currentId];
+
+      if (newStatus === "Booked" && !parcel.paymentDone) {
+        message.textContent = "Cannot update to 'Booked' without payment confirmation.";
+        message.className = "error";
+        return;
+      }
+
+      parcel.parcelStatus = newStatus;
+      document.getElementById("statusVal").textContent = newStatus;
+
+      message.textContent = "Parcel status updated successfully.";
+      message.className = "success";
+    }
+  </script>
+
+</body>
+</html>

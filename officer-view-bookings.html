@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Officer View - All Bookings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #2a5298, #1e3c72);
+      color: white;
+      padding: 2rem;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .filters {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    input[type="date"] {
+      padding: 0.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      margin-left: 0.5rem;
+      background-color: #ffcc00;
+      color: black;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      margin-top: 1rem;
+      border-collapse: collapse;
+      background: white;
+      color: black;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 0.8rem;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>All Bookings - Officer Panel</h2>
+
+  <div class="filters">
+    <input type="date" id="filterDate" />
+    <button onclick="filterByDate()">Filter by Date</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Booking ID</th>
+        <th>Customer Name</th>
+        <th>Receiver Name</th>
+        <th>Booking Date</th>
+        <th>Amount</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <script>
+    const bookings = [
+      { bookingId: "BKG1003", customerName: "Amit Sharma", receiverName: "Neha Tiwari", bookingDate: "2025-07-05", amount: "₹300", status: "Booked" },
+      { bookingId: "BKG1001", customerName: "Sneha Verma", receiverName: "Aditya Das", bookingDate: "2025-07-01", amount: "₹180", status: "Delivered" },
+      { bookingId: "BKG1005", customerName: "Nikhil Yadav", receiverName: "Ritu Kapoor", bookingDate: "2025-07-07", amount: "₹260", status: "In Transit" },
+      { bookingId: "BKG1002", customerName: "Priya Mehta", receiverName: "Rohit Bansal", bookingDate: "2025-07-03", amount: "₹210", status: "Scheduled" },
+      { bookingId: "BKG1004", customerName: "Vivek Tiwari", receiverName: "Ankit Jain", bookingDate: "2025-07-06", amount: "₹220", status: "New" }
+    ];
+
+    function displayTable(data) {
+      const tbody = document.getElementById("tableBody");
+      tbody.innerHTML = "";
+
+      // Sort by date descending
+      data.sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate));
+
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${row.bookingId}</td>
+          <td>${row.customerName}</td>
+          <td>${row.receiverName}</td>
+          <td>${row.bookingDate}</td>
+          <td>${row.amount}</td>
+          <td>${row.status}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterByDate() {
+      const selectedDate = document.getElementById("filterDate").value;
+      if (!selectedDate) {
+        displayTable(bookings);
+        return;
+      }
+
+      const filtered = bookings.filter(b => b.bookingDate === selectedDate);
+      displayTable(filtered);
+    }
+
+    // Initial render
+    displayTable(bookings);
+  </script>
+
+</body>
+</html>

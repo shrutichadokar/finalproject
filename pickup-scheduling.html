@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pickup Scheduling - A1 Parcel Pvt. Ltd.</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      padding: 2rem;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .form {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    input[type="text"], input[type="datetime-local"] {
+      padding: 0.6rem;
+      border-radius: 5px;
+      border: none;
+      width: 300px;
+      font-size: 1rem;
+      margin-top: 0.5rem;
+    }
+    button {
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      background-color: #ffcc00;
+      color: black;
+      margin: 1rem 0.5rem;
+    }
+    .table-container {
+      max-width: 850px;
+      margin: 0 auto;
+      background: white;
+      color: black;
+      padding: 1rem;
+      border-radius: 10px;
+      display: none;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      padding: 0.8rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    .error {
+      color: #ff4d4d;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Pickup Scheduling - Officer Panel</h2>
+
+  <div class="form">
+    <input type="text" id="bookingId" placeholder="Enter Booking ID" />
+    <button onclick="loadBooking()">Load Booking</button>
+    <div class="error" id="errorMsg"></div>
+  </div>
+
+  <div class="table-container" id="bookingDetails">
+    <h3>Booking Information</h3>
+    <table>
+      <tr><th>Booking ID</th><td id="bId"></td></tr>
+      <tr><th>Full Name</th><td id="fullName"></td></tr>
+      <tr><th>Address</th><td id="address"></td></tr>
+      <tr><th>Receiver Name</th><td id="recName"></td></tr>
+      <tr><th>Receiver Address</th><td id="recAddress"></td></tr>
+      <tr><th>Date of Booking</th><td id="dateBook"></td></tr>
+      <tr><th>Parcel Status</th><td id="status"></td></tr>
+      <tr><th>Pickup Time</th><td id="pickupTime"></td></tr>
+      <tr><th>Dropoff Time</th><td id="dropTime"></td></tr>
+    </table>
+
+    <h3>Update Pickup/Dropoff Time</h3>
+    <label for="newPickup">New Pickup Time:</label><br>
+    <input type="datetime-local" id="newPickup" /><br>
+    <label for="newDrop">New Dropoff Time:</label><br>
+    <input type="datetime-local" id="newDrop" /><br>
+    <button onclick="updateSchedule()">Update Schedule</button>
+  </div>
+
+  <script>
+    const mockData = {
+      "BKG123456": {
+        bookingId: "BKG123456",
+        fullName: "Vivek Tiwari",
+        address: "A1 Nagar, Indore, MP",
+        receiverName: "Rahul Mehta",
+        receiverAddress: "Sector 21, Noida, UP",
+        bookingDate: "2025-07-04",
+        parcelStatus: "Booked",
+        pickupTime: "2025-07-04T10:00",
+        dropTime: "2025-07-05T18:00"
+      }
+    };
+
+    let currentBooking = null;
+
+    function loadBooking() {
+      const bookingId = document.getElementById("bookingId").value.trim().toUpperCase();
+      const data = mockData[bookingId];
+      const errorMsg = document.getElementById("errorMsg");
+      const details = document.getElementById("bookingDetails");
+
+      if (!data) {
+        errorMsg.textContent = "Booking ID not found.";
+        details.style.display = "none";
+        return;
+      }
+
+      errorMsg.textContent = "";
+      currentBooking = bookingId;
+
+      document.getElementById("bId").textContent = data.bookingId;
+      document.getElementById("fullName").textContent = data.fullName;
+      document.getElementById("address").textContent = data.address;
+      document.getElementById("recName").textContent = data.receiverName;
+      document.getElementById("recAddress").textContent = data.receiverAddress;
+      document.getElementById("dateBook").textContent = data.bookingDate;
+      document.getElementById("status").textContent = data.parcelStatus;
+      document.getElementById("pickupTime").textContent = data.pickupTime.replace("T", " ");
+      document.getElementById("dropTime").textContent = data.dropTime.replace("T", " ");
+      
+      document.getElementById("newPickup").value = data.pickupTime;
+      document.getElementById("newDrop").value = data.dropTime;
+
+      details.style.display = "block";
+    }
+
+    function updateSchedule() {
+      if (!currentBooking) return;
+
+      const newPickup = document.getElementById("newPickup").value;
+      const newDrop = document.getElementById("newDrop").value;
+
+      if (!newPickup || !newDrop) {
+        alert("Please enter both Pickup and Dropoff times.");
+        return;
+      }
+
+      mockData[currentBooking].pickupTime = newPickup;
+      mockData[currentBooking].dropTime = newDrop;
+
+      document.getElementById("pickupTime").textContent = newPickup.replace("T", " ");
+      document.getElementById("dropTime").textContent = newDrop.replace("T", " ");
+
+      alert("Pickup & Dropoff times updated successfully.");
+    }
+  </script>
+
+</body>
+</html>

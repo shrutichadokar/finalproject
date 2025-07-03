@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Customer Dashboard - A1 Parcel Pvt. Ltd.</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body, html {
+      height: 100%;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+    }
+
+    .navbar {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .navbar .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .menu {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .menu button {
+      background-color: lightblue;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      color: black;
+    }
+
+    .menu button:hover {
+      background-color: #a3d5f7;
+    }
+
+    .container {
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .container h1 {
+      margin-bottom: 1rem;
+    }
+
+    .content-area {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      min-height: 200px;
+    }
+
+    .content-area p {
+      font-size: 1.1rem;
+    }
+
+    @media (max-width: 768px) {
+      .menu {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-end;
+      }
+
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">A1 Parcel - Customer</div>
+    <div class="menu">
+      <button onclick="navigate('home')">Home</button>
+      <button onclick="location.href='booking.html'">Booking Service</button>
+      <button onclick="location.href='tracking.html'">Tracking</button>
+      <button onclick="location.href='previous-bookings.html'">Previous Booking</button>
+      <button onclick="location.href='cancel-booking.html'">Cancel Bookings</button>
+      <button onclick="location.href='customer-feedback.html'">Give Feedback</button>
+      <button onclick="navigate('support')">Contact Support</button>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1 id="welcome">Welcome, Customer!</h1>
+
+    <div class="content-area" id="contentArea">
+      <p>This is your customer dashboard. Use the menu above to navigate through booking, tracking, and support features.</p>
+    </div>
+  </div>
+
+  <script>
+    // Simulate user session (In real app, use sessionStorage or back-end login)
+    const customerName = "Customer123"; // Replace with real dynamic value
+    document.getElementById("welcome").textContent = `Welcome, ${customerName}!`;
+
+    const contentArea = document.getElementById("contentArea");
+
+    function navigate(page) {
+      switch (page) {
+        case 'home':
+          location.reload();
+          break;
+        case 'booking':
+          contentArea.innerHTML = `<h2>Booking Service</h2><p>You can book a parcel service from here. (Feature coming soon)</p>`;
+          break;
+        case 'tracking':
+          contentArea.innerHTML = `<h2>Track Parcel</h2><p>Enter your tracking number to track the parcel. (Feature coming soon)</p>`;
+          break;
+        case 'previous':
+          contentArea.innerHTML = `<h2>Previous Bookings</h2><p>Your booking history will appear here. (Feature coming soon)</p>`;
+          break;
+        case 'support':
+          contentArea.innerHTML = `<h2>Contact Support</h2><p>You can contact our support team at support@a1parcel.com or call +91-1234567890</p>`;
+          break;
+      }
+    }
+
+    function logout() {
+      alert("Logging out...");
+      window.location.href = "login.html"; // redirect back to login
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Delivered Parcel Feedback</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #1e3c72, #2a5298);
+      color: white;
+      padding: 2rem;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 1rem;
+    }
+
+    .top-bar button {
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      font-weight: bold;
+      background-color: #ff9900;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .top-bar button:hover {
+      background-color: #e68a00;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 1rem;
+      background: white;
+      color: black;
+      border-collapse: collapse;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 0.8rem;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f5f5f5;
+    }
+
+    button {
+      background-color: #ffcc00;
+      border: none;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #fff;
+      color: black;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 400px;
+      text-align: center;
+    }
+
+    .modal-content textarea,
+    .modal-content input[type=number] {
+      width: 100%;
+      margin-top: 1rem;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .modal-content button {
+      margin-top: 1rem;
+    }
+
+    .message {
+      margin-top: 1rem;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <button onclick="location.href='customer-dashboard.html'">Back to Dashboard</button>
+  </div>
+
+  <h2>Delivered Orders - Give Feedback</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Booking ID</th>
+        <th>Receiver</th>
+        <th>Delivery Address</th>
+        <th>Status</th>
+        <th>Feedback</th>
+      </tr>
+    </thead>
+    <tbody id="orderTableBody"></tbody>
+  </table>
+
+  <!-- Feedback Modal -->
+  <div class="modal" id="feedbackModal">
+    <div class="modal-content">
+      <h3>Submit Feedback</h3>
+      <p id="modalBookingId"></p>
+      <textarea id="feedbackText" placeholder="Enter your feedback..." rows="4"></textarea>
+      <br>
+      <label for="rating">Rating (1 to 5):</label>
+      <input type="number" id="rating" min="1" max="5" />
+      <br>
+      <button onclick="submitFeedback()">Submit</button>
+      <button onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+
+  <div id="confirmationMsg" class="message"></div>
+
+  <script>
+    const orders = [
+      { bookingId: "BKG1001", receiver: "Amit Sharma", address: "Delhi", status: "Delivered" },
+      { bookingId: "BKG1002", receiver: "Sneha Verma", address: "Mumbai", status: "In Transit" },
+      { bookingId: "BKG1003", receiver: "Ravi Mehta", address: "Bhopal", status: "Delivered" },
+    ];
+
+    let currentBookingId = null;
+
+    function loadOrders() {
+      const tbody = document.getElementById("orderTableBody");
+      tbody.innerHTML = "";
+
+      orders.forEach(order => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${order.bookingId}</td>
+          <td>${order.receiver}</td>
+          <td>${order.address}</td>
+          <td>${order.status}</td>
+          <td>
+            ${order.status === "Delivered" ? `<button onclick="openModal('${order.bookingId}')">Give Feedback</button>` : "N/A"}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openModal(bookingId) {
+      currentBookingId = bookingId;
+      document.getElementById("feedbackModal").style.display = "flex";
+      document.getElementById("modalBookingId").textContent = `Booking ID: ${bookingId}`;
+    }
+
+    function closeModal() {
+      document.getElementById("feedbackModal").style.display = "none";
+      document.getElementById("feedbackText").value = "";
+      document.getElementById("rating").value = "";
+      currentBookingId = null;
+    }
+
+    function submitFeedback() {
+      const feedback = document.getElementById("feedbackText").value.trim();
+      const rating = parseInt(document.getElementById("rating").value);
+
+      const message = document.getElementById("confirmationMsg");
+
+      if (!feedback || isNaN(rating) || rating < 1 || rating > 5) {
+        message.textContent = "Please enter valid feedback and a rating between 1 to 5.";
+        message.style.color = "red";
+        return;
+      }
+
+      console.log(`Feedback for ${currentBookingId}:`, { feedback, rating });
+
+      message.innerHTML = `✅ Thank you! Your feedback for Booking ID <strong>${currentBookingId}</strong> was submitted.`;
+      message.style.color = "#00ff00";
+      closeModal();
+    }
+
+    loadOrders();
+  </script>
+
+</body>
+</html>

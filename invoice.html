@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Parcel Invoice - A1 Parcel Pvt. Ltd.</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      padding: 2rem;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .form-section {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    input[type="text"] {
+      padding: 0.5rem;
+      border-radius: 5px;
+      border: none;
+      width: 250px;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      margin-left: 1rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      background-color: #ffcc00;
+      color: black;
+    }
+
+    .invoice {
+      background-color: white;
+      color: black;
+      border-radius: 10px;
+      padding: 2rem;
+      max-width: 700px;
+      margin: 0 auto;
+      display: none;
+    }
+
+    .invoice h3 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .invoice p {
+      line-height: 1.6;
+    }
+
+    .print-btn {
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+
+    @media print {
+      body {
+        background: white;
+        color: black;
+      }
+      .form-section, .print-btn {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Invoice Lookup</h2>
+
+  <div class="form-section">
+    <label for="bookingId">Enter Booking ID:</label>
+    <input type="text" id="bookingId" placeholder="e.g. BKG123456" />
+    <button onclick="fetchInvoice()">Fetch Invoice</button>
+  </div>
+
+  <div class="invoice" id="invoice">
+    <h3>Parcel Invoice</h3>
+    <div id="invoiceContent"></div>
+    <div class="print-btn">
+      <button onclick="window.print()">Download / Print Invoice</button>
+    </div>
+  </div>
+
+  <script>
+    function fetchInvoice() {
+      const bookingId = document.getElementById("bookingId").value.trim().toUpperCase();
+
+      // For demo purposes, this is mocked data:
+      const mockData = {
+        "BKG123456": {
+          bookingId: "BKG123456",
+          paymentId: "PAY987654",
+          transactionId: "TXN543210",
+          invoiceNumber: "INV20250703001",
+          receiverName: "Rahul Mehta",
+          receiverAddress: "Sector 21, Noida, UP",
+          receiverPin: "201301",
+          receiverMobile: "9876543210",
+          parcelWeight: "2000",
+          parcelContents: "Books and Stationery",
+          deliveryType: "Express Delivery",
+          packingPreference: "Premium Packing",
+          pickupTime: "2025-07-04T10:00",
+          dropoffTime: "2025-07-05T17:00",
+          parcelServiceCost: "₹262.50",
+          paymentTime: "2025-07-04 12:42 PM"
+        }
+      };
+
+      const data = mockData[bookingId];
+
+      if (!data) {
+        alert("No invoice found for Booking ID: " + bookingId);
+        return;
+      }
+
+      const content = `
+        <p><strong>Booking ID:</strong> ${data.bookingId}</p>
+        <p><strong>Payment ID:</strong> ${data.paymentId}</p>
+        <p><strong>Transaction ID:</strong> ${data.transactionId}</p>
+        <p><strong>Invoice Number:</strong> ${data.invoiceNumber}</p>
+        <hr/>
+        <p><strong>Receiver Name:</strong> ${data.receiverName}</p>
+        <p><strong>Receiver Address:</strong> ${data.receiverAddress}</p>
+        <p><strong>Receiver Pin:</strong> ${data.receiverPin}</p>
+        <p><strong>Receiver Mobile:</strong> ${data.receiverMobile}</p>
+        <hr/>
+        <p><strong>Parcel Weight:</strong> ${data.parcelWeight} g</p>
+        <p><strong>Parcel Contents:</strong> ${data.parcelContents}</p>
+        <p><strong>Delivery Type:</strong> ${data.deliveryType}</p>
+        <p><strong>Packing Preference:</strong> ${data.packingPreference}</p>
+        <p><strong>Pickup Time:</strong> ${data.pickupTime.replace('T', ' ')}</p>
+        <p><strong>Dropoff Time:</strong> ${data.dropoffTime.replace('T', ' ')}</p>
+        <hr/>
+        <p><strong>Parcel Service Cost:</strong> ${data.parcelServiceCost}</p>
+        <p><strong>Parcel Payment Time:</strong> ${data.paymentTime}</p>
+      `;
+
+      document.getElementById("invoiceContent").innerHTML = content;
+      document.getElementById("invoice").style.display = "block";
+    }
+  </script>
+
+</body>
+</html>

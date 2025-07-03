@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Booking Service - A1 Parcel Pvt. Ltd.</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .container {
+      padding: 2rem;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    form {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      border-radius: 10px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 0.6rem;
+      margin-top: 0.5rem;
+      border-radius: 5px;
+      border: none;
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      background-color: #ff9900;
+      border: none;
+      color: black;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .acknowledgment {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: rgba(0, 128, 0, 0.2);
+      border: 2px solid #00ff00;
+      border-radius: 10px;
+    }
+
+    .acknowledgment h3 {
+      color: #00ff00;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">A1 Parcel - Booking Service</div>
+    <div><button onclick="location.href='customer-dashboard.html'">Back to Dashboard</button></div>
+  </nav>
+
+  <div class="container">
+    <h2>Book Your Parcel</h2>
+
+    <!-- Simulated Logged-in User Details -->
+    <div>
+      <p><strong>Name:</strong> Vivek Sharma</p>
+      <p><strong>Address:</strong> 45 MG Road, Indore, MP - 452001</p>
+      <p><strong>Contact:</strong> +91-9876543210</p>
+    </div>
+
+    <form id="bookingForm">
+      <label for="receiverName">Receiver Name</label>
+      <input type="text" id="receiverName" required />
+
+      <label for="receiverAddress">Receiver Address</label>
+      <textarea id="receiverAddress" rows="3" required></textarea>
+
+      <label for="receiverPin">Receiver Pin Code</label>
+      <input type="text" id="receiverPin" required pattern="[0-9]{6}" />
+
+      <label for="receiverMobile">Receiver Mobile</label>
+      <input type="text" id="receiverMobile" required pattern="[0-9]{10}" />
+
+      <label for="parcelWeight">Parcel Weight (in grams)</label>
+      <input type="number" id="parcelWeight" min="1" required />
+
+      <label for="parcelContents">Parcel Contents Description</label>
+      <textarea id="parcelContents" rows="2" required></textarea>
+
+      <label for="deliveryType">Parcel Delivery Type</label>
+      <select id="deliveryType" required>
+        <option value="standard">Standard Delivery (₹30)</option>
+        <option value="express">Express Delivery (₹80)</option>
+        <option value="sameday">Same-Day Delivery (₹150)</option>
+      </select>
+
+      <label for="packing">Parcel Packing Preference</label>
+      <select id="packing" required>
+        <option value="basic">Basic Packing (₹10)</option>
+        <option value="premium">Premium Packing (₹30)</option>
+      </select>
+
+      <label for="pickupTime">Parcel Pickup Time</label>
+      <input type="datetime-local" id="pickupTime" required />
+
+      <label for="dropoffTime">Parcel Dropoff Time</label>
+      <input type="datetime-local" id="dropoffTime" required />
+
+      <button type="submit">Calculate & Proceed</button>
+    </form>
+
+    <div id="acknowledgment" class="acknowledgment" style="display: none;"></div>
+  </div>
+
+  <script>
+    document.getElementById("bookingForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const weight = parseFloat(document.getElementById("parcelWeight").value);
+      const delivery = document.getElementById("deliveryType").value;
+      const packing = document.getElementById("packing").value;
+
+      const BASE_RATE = 50;
+      const WEIGHT_CHARGE = weight * 0.02;
+
+      let deliveryCharge = 0;
+      if (delivery === "standard") deliveryCharge = 30;
+      else if (delivery === "express") deliveryCharge = 80;
+      else if (delivery === "sameday") deliveryCharge = 150;
+
+      let packingCharge = (packing === "premium") ? 30 : 10;
+
+      const TAX_RATE = 0.05;
+
+      const costBeforeTax = BASE_RATE + WEIGHT_CHARGE + deliveryCharge + packingCharge;
+      const totalCost = Math.round(costBeforeTax * (1 + TAX_RATE));
+
+      const bookingId = "A1BKG" + Math.floor(Math.random() * 1000000);
+      const now = new Date().toLocaleString();
+
+      const ack = document.getElementById("acknowledgment");
+      ack.style.display = "block";
+      ack.innerHTML = `
+        <h3>Booking Successful!</h3>
+        <p><strong>Booking ID:</strong> ${bookingId}</p>
+        <p><strong>Receiver:</strong> ${document.getElementById("receiverName").value}</p>
+        <p><strong>Address:</strong> ${document.getElementById("receiverAddress").value}</p>
+        <p><strong>Parcel Weight:</strong> ${weight} grams</p>
+        <p><strong>Delivery Type:</strong> ${delivery}</p>
+        <p><strong>Packing Preference:</strong> ${packing}</p>
+        <p><strong>Pickup:</strong> ${document.getElementById("pickupTime").value}</p>
+        <p><strong>Dropoff:</strong> ${document.getElementById("dropoffTime").value}</p>
+        <p><strong>Booking Time:</strong> ${now}</p>
+        <p><strong>Total Cost (incl. tax):</strong> ₹${totalCost}</p>
+        <br/>
+        <button onclick="goToPayment()">Proceed to Payment</button>
+      `;
+    });
+
+    function goToPayment() {
+      alert("Redirecting to payment...");
+      window.location.href = "payment.html"; // stub
+    }
+  </script>
+
+</body>
+</html>

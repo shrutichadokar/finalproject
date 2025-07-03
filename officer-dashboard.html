@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Officer Dashboard - A1 Parcel Pvt. Ltd.</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body, html {
+      height: 100%;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+    }
+
+    .navbar {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .navbar .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .menu {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .menu button {
+      background-color: lightblue;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      color: black;
+    }
+
+    .menu button:hover {
+      background-color: #a3d5f7;
+    }
+
+    .container {
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .container h1 {
+      margin-bottom: 1rem;
+    }
+
+    .content-area {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      min-height: 200px;
+    }
+
+    .content-area p {
+      font-size: 1.1rem;
+    }
+
+    @media (max-width: 768px) {
+      .menu {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-end;
+      }
+
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">A1 Parcel - Officer</div>
+    <div class="menu">
+      <button onclick="navigate('home')">Home</button>
+      <button onclick="navigate('booking')">Booking</button>
+      <button onclick="navigate('tracking')">Tracking</button>
+      <button onclick="navigate('delivery')">Delivery Status</button>
+      <button onclick="navigate('pickup')">Pickup Scheduling</button>
+      <button onclick="navigate('cancel')">Cancel</button>
+      <button onclick="navigate('bookings')">View All Bookings</button>
+      <button onclick="navigate('feedback')">Read feedback</button>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1 id="welcome">Welcome, Officer!</h1>
+
+    <div class="content-area" id="contentArea">
+      <p>This is your officer dashboard. Use the menu above to navigate tracking, delivery, and scheduling tools.</p>
+    </div>
+  </div>
+
+  <script>
+    // Simulate officer name
+    const officerID = "OFF1234"; // Replace with sessionStorage if needed
+    document.getElementById("welcome").textContent = `Welcome, Officer ${officerID}!`;
+
+    const contentArea = document.getElementById("contentArea");
+
+    function navigate(page) {
+      switch (page) {
+        case 'home':
+          location.reload();
+          break;
+          case 'booking':
+          window.location.href = "admin-booking.html";
+          break;
+        case 'tracking':
+          window.location.href = "officer-tracking.html";
+          break;
+        case 'delivery':
+          window.location.href = "delivery-status.html";
+          break;
+        case 'pickup':
+          window.location.href = "pickup-scheduling.html";
+          break;
+        case 'bookings':
+          window.location.href = "officer-view-bookings.html";
+          break;
+        case 'cancel':
+          window.location.href = "officer-cancel-bookings.html";
+          break;
+        case 'feedback':
+          window.location.href = "read-feedback.html";
+          break;
+      }
+    }
+
+    function logout() {
+      alert("Logging out...");
+      window.location.href = "login.html";
+    }
+  </script>
+
+</body>
+</html>

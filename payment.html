@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payment - A1 Parcel Pvt. Ltd.</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #1e3c72, #2a5298);
+      color: white;
+      padding: 2rem;
+    }
+    h2 {
+      text-align: center;
+    }
+    .container {
+      max-width: 500px;
+      margin: 2rem auto;
+      background: rgba(255,255,255,0.1);
+      padding: 2rem;
+      border-radius: 10px;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      margin-top: 0.4rem;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 1.5rem;
+      padding: 0.7rem;
+      width: 100%;
+      font-size: 1rem;
+      background-color: #ffc107;
+      border: none;
+      color: black;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .error {
+      color: #ff4d4d;
+      margin-top: 0.2rem;
+      font-size: 0.9rem;
+    }
+    .summary, .receipt {
+      background: white;
+      color: black;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-top: 2rem;
+    }
+    .receipt p {
+      line-height: 1.5;
+    }
+    .hidden {
+      display: none;
+    }
+    .link {
+      margin-top: 1rem;
+      text-align: center;
+    }
+    .link a {
+      color: #ffcc00;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Secure Payment</h2>
+  <div class="container">
+    <form id="paymentForm">
+      <label for="cardNumber">Card Number</label>
+      <input type="text" id="cardNumber" maxlength="16" required />
+      <div id="cardError" class="error"></div>
+
+      <label for="expiry">Expiry Date (MM/YY)</label>
+      <input type="text" id="expiry" placeholder="MM/YY" required />
+      <div id="expiryError" class="error"></div>
+
+      <label for="cvv">CVV</label>
+      <input type="text" id="cvv" maxlength="4" required />
+      <div id="cvvError" class="error"></div>
+
+      <label for="cardholder">Cardholder Name</label>
+      <input type="text" id="cardholder" required />
+      <div id="holderError" class="error"></div>
+
+      <div class="summary">
+        <p><strong>Total Amount Due:</strong> ₹<span id="amountDisplay">0.00</span></p>
+        <p><strong>Booking ID:</strong> <span id="bookingDisplay"></span></p>
+      </div>
+
+      <button type="submit">Proceed to Pay</button>
+    </form>
+
+    <div id="confirmation" class="summary hidden">
+      <p>Please confirm your payment of ₹<span id="confirmAmount"></span> for Booking ID <strong><span id="confirmBooking"></span></strong>.</p>
+      <button onclick="processPayment()">Confirm Payment</button>
+      <button onclick="cancelConfirmation()">Cancel</button>
+    </div>
+
+    <div id="receipt" class="receipt hidden"></div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const bookingId = urlParams.get("bookingId") || "UNKNOWN";
+    const amount = urlParams.get("amount") || "0.00";
+
+    document.getElementById("amountDisplay").textContent = amount;
+    document.getElementById("bookingDisplay").textContent = bookingId;
+
+    const form = document.getElementById("paymentForm");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      clearErrors();
+
+      const cardNumber = document.getElementById("cardNumber").value.trim();
+      const expiry = document.getElementById("expiry").value.trim();
+      const cvv = document.getElementById("cvv").value.trim();
+      const cardholder = document.getElementById("cardholder").value.trim();
+
+      let valid = true;
+
+      if (!/^\d{16}$/.test(cardNumber)) {
+        showError("cardError", "Card number must be 16 digits.");
+        valid = false;
+      }
+
+      if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+        showError("expiryError", "Expiry must be in MM/YY format.");
+        valid = false;
+      } else {
+        const [mm, yy] = expiry.split("/").map(Number);
+        const expDate = new Date(`20${yy}`, mm - 1);
+        const now = new Date();
+        if (expDate < now) {
+          showError("expiryError", "Card is expired.");
+          valid = false;
+        }
+      }
+
+      if (!/^\d{3,4}$/.test(cvv)) {
+        showError("cvvError", "CVV must be 3 or 4 digits.");
+        valid = false;
+      }
+
+      if (cardholder === "") {
+        showError("holderError", "Cardholder name is required.");
+        valid = false;
+      }
+
+      if (valid) {
+        // Show confirmation
+        document.getElementById("confirmAmount").textContent = amount;
+        document.getElementById("confirmBooking").textContent = bookingId;
+        form.classList.add("hidden");
+        document.getElementById("confirmation").classList.remove("hidden");
+      }
+    });
+
+    function showError(id, message) {
+      document.getElementById(id).textContent = message;
+    }
+
+    function clearErrors() {
+      ["cardError", "expiryError", "cvvError", "holderError"].forEach(id => {
+        document.getElementById(id).textContent = "";
+      });
+    }
+
+    function cancelConfirmation() {
+      document.getElementById("confirmation").classList.add("hidden");
+      form.classList.remove("hidden");
+    }
+
+    function processPayment() {
+      const txnId = "TXN" + Math.floor(100000 + Math.random() * 900000);
+      const payId = "PAY" + Math.floor(100000 + Math.random() * 900000);
+      const now = new Date().toLocaleString();
+
+      const receipt = `
+        <h3>Payment Successful</h3>
+        <p><strong>Payment ID:</strong> ${payId}</p>
+        <p><strong>Transaction ID:</strong> ${txnId}</p>
+        <p><strong>Transaction Date:</strong> ${now}</p>
+        <p><strong>Transaction Type:</strong> Credit</p>
+        <p><strong>Booking ID:</strong> ${bookingId}</p>
+        <p><strong>Transaction Amount:</strong> ₹${amount}</p>
+        <p><strong>Status:</strong> Success</p>
+        <button onclick="window.print()">Download Receipt</button>
+        <div class="link">
+          <a href="customer-dashboard.html">Go to Dashboard</a> | 
+          <a href="invoice.html?bookingId=${bookingId}">E-Bill History</a>
+        </div>
+      `;
+
+      document.getElementById("confirmation").classList.add("hidden");
+      document.getElementById("receipt").innerHTML = receipt;
+      document.getElementById("receipt").classList.remove("hidden");
+    }
+  </script>
+
+</body>
+</html>

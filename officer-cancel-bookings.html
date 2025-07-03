@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Officer - Cancel Booking</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #1e3c72, #2a5298);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 1rem;
+    }
+    input {
+      padding: 0.6rem;
+      width: 300px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: none;
+      margin: 0.5rem;
+    }
+    button {
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      font-weight: bold;
+      background-color: #ffcc00;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .message {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    .success {
+      color: #00ff00;
+    }
+    .error {
+      color: #ff4d4d;
+    }
+    .top-bar {
+      text-align: left;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <button onclick="goToDashboard()">⬅ Back to Dashboard</button>
+  </div>
+
+  <h2>Cancel Parcel Booking (Officer Panel)</h2>
+  <p>Enter Booking ID, Customer ID, or Customer Name</p>
+
+  <input type="text" id="bookingIdInput" placeholder="Booking ID (e.g. BKG1001)" /><br>
+  <input type="text" id="customerIdInput" placeholder="Customer ID (e.g. CUST0001)" /><br>
+  <input type="text" id="customerNameInput" placeholder="Customer Name (e.g. Amit Sharma)" /><br>
+
+  <button onclick="cancelBooking()">Cancel Booking</button>
+
+  <div id="message" class="message"></div>
+
+  <script>
+    // Sample bookings data
+    const bookings = {
+      "BKG1001": { customerId: "CUST0001", customerName: "Amit Sharma", amount: 280, status: "Booked" },
+      "BKG1002": { customerId: "CUST0002", customerName: "Sneha Verma", amount: 300, status: "Delivered" },
+      "BKG1003": { customerId: "CUST0003", customerName: "Ravi Mehta", amount: 210, status: "In Transit" },
+      "BKG1004": { customerId: "CUST0004", customerName: "Vivek Tiwari", amount: 250, status: "Booked" }
+    };
+
+    function goToDashboard() {
+      window.location.href = "officer-dashboard.html"; // Adjust the filename/path as needed
+    }
+
+    function cancelBooking() {
+      const bookingId = document.getElementById("bookingIdInput").value.trim().toUpperCase();
+      const customerId = document.getElementById("customerIdInput").value.trim().toUpperCase();
+      const customerName = document.getElementById("customerNameInput").value.trim().toLowerCase();
+      const messageDiv = document.getElementById("message");
+
+      let foundBookingId = null;
+
+      // Step 1: Match using Booking ID
+      if (bookingId && bookings[bookingId]) {
+        foundBookingId = bookingId;
+      } else {
+        // Step 2: Match using Customer ID or Name
+        for (let key in bookings) {
+          const booking = bookings[key];
+          if (
+            (!bookingId && booking.customerId === customerId) ||
+            (!bookingId && booking.customerName.toLowerCase() === customerName)
+          ) {
+            foundBookingId = key;
+            break;
+          }
+        }
+      }
+
+      if (!foundBookingId) {
+        messageDiv.textContent = "Booking cancel failed. No matching booking found.";
+        messageDiv.className = "message error";
+        return;
+      }
+
+      const booking = bookings[foundBookingId];
+
+      // Prevent cancellation of Delivered or In Transit bookings
+      if (booking.status === "Delivered" || booking.status === "In Transit") {
+        messageDiv.textContent = `Cannot cancel this booking. Status is "${booking.status}".`;
+        messageDiv.className = "message error";
+        return;
+      }
+
+      if (booking.status === "Cancelled") {
+        messageDiv.textContent = "Booking is already cancelled.";
+        messageDiv.className = "message error";
+        return;
+      }
+
+      if (booking.status === "Booked") {
+        booking.status = "Cancelled";
+        messageDiv.innerHTML = `
+          Booking cancelled successfully.<br>
+          <strong>Booking ID:</strong> ${foundBookingId}<br>
+          <strong>Amount:</strong> ₹${booking.amount}<br>
+          Refund will be credited to the customer account within 5 working days.
+        `;
+        messageDiv.className = "message success";
+        return;
+      }
+
+      // Fallback
+      messageDiv.textContent = "Booking cancel failed.";
+      messageDiv.className = "message error";
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register - A1 Parcel Pvt. Ltd.</title>
+  <style>
+    * {  
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body, html {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      overflow-x: hidden;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      position: fixed;
+      width: 100%;
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 1rem;
+    }
+
+    .nav-links li {
+      display: inline;
+    }
+
+    .nav-links a,
+    .nav-links button {
+      text-decoration: none;
+      color: black;
+      background-color: lightblue;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+    }
+
+    .menu-toggle {
+      display: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 2rem 1rem;
+      padding-top: 100px; /* push below navbar */
+    }
+
+    .hero-content {
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 2rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+      color: white;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .hero-content h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #eee;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      text-align: left;
+      color: white;
+    }
+
+    label {
+      font-weight: 500;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 0.6rem;
+      border-radius: 5px;
+      border: none;
+      font-size: 1rem;
+      margin-top: 0.3rem;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    button {
+      padding: 0.7rem 1.5rem;
+      border: none;
+      border-radius: 5px;
+      background-color: #ff9900;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #e68a00;
+    }
+
+    #acknowledgement {
+      margin-top: 20px;
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        flex-direction: column;
+        background-color: rgba(0, 0, 0, 0.9);
+        position: absolute;
+        top: 60px;
+        right: 0;
+        width: 200px;
+        display: none;
+        padding: 1rem;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <nav class="navbar">
+      <div class="logo">A1 Parcel Pvt. Ltd.</div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><button id="loginBtn">Login</button></li>
+      </ul>
+      <div class="menu-toggle" id="menuToggle">☰</div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h2>Customer Registration</h2>
+      <form id="registrationForm">
+        <label for="name">Customer Name:
+          <input type="text" id="name" maxlength="50" required />
+        </label>
+
+        <label for="email">Email:
+          <input type="email" id="email" required />
+        </label>
+
+        <label for="mobile">Mobile Number:
+          <select id="countryCode" required>
+            <option value="+91">India (+91)</option>
+            <option value="+1">US (+1)</option>
+            <option value="+44">UK (+44)</option>
+          </select>
+          <input type="tel" id="mobile" maxlength="10" pattern="\d{10}" placeholder="10-digit number" required />
+        </label>
+
+        <label for="address">Address:
+          <textarea id="address" rows="3" required></textarea>
+        </label>
+
+        <label for="password">Password:
+          <input type="password" id="password" maxlength="30" required />
+        </label>
+
+        <label for="confirmPassword">Confirm Password:
+          <input type="password" id="confirmPassword" maxlength="30" required />
+        </label>
+
+        <label for="preferences">Preferences:
+          <textarea id="preferences" rows="2" placeholder="e.g., SMS delivery updates, email alerts"></textarea>
+        </label>
+
+        <div class="buttons">
+          <button type="submit">Register</button>
+          <button type="reset">Reset</button>
+        </div>
+      </form>
+
+      <div id="acknowledgement" style="display:none;"></div>
+    </div>
+  </section>
+
+  <script>
+    const toggleMenu = () => {
+      const nav = document.getElementById("navLinks");
+      nav.classList.toggle("active");
+    };
+
+    document.getElementById("menuToggle").addEventListener("click", toggleMenu);
+    document.getElementById("loginBtn").addEventListener("click", () => {
+      location.href = "login.html";
+    });
+
+    function generateCustomerID() {
+      return 'CUST' + Math.floor(100000 + Math.random() * 900000);
+    }
+
+    async function encryptPassword(password) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(password);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      return Array.from(new Uint8Array(hashBuffer))
+                  .map(b => b.toString(16).padStart(2, '0'))
+                  .join('');
+    }
+
+    document.getElementById("registrationForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const mobile = document.getElementById('mobile').value.trim();
+      const country = document.getElementById('countryCode').value;
+      const address = document.getElementById('address').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const preferences = document.getElementById('preferences').value;
+
+      const ack = document.getElementById('acknowledgement');
+
+      if (password !== confirmPassword) {
+        ack.style.display = 'block';
+        ack.innerHTML = `<p style="color:red;">Passwords do not match!</p>`;
+        return;
+      }
+
+      if (!/^\d{10}$/.test(mobile)) {
+        ack.style.display = 'block';
+        ack.innerHTML = `<p style="color:red;">Please enter a valid 10-digit mobile number.</p>`;
+        return;
+      }
+
+      const encryptedPassword = await encryptPassword(password);
+      const customerID = generateCustomerID();
+
+      ack.style.display = 'block';
+      ack.innerHTML = `
+        <p style="color:lightgreen;"><strong>Customer Registration Successful.</strong></p>
+        <p><strong>Customer ID:</strong> ${customerID}</p>
+        <p><strong>Customer Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+      `;
+
+      console.log({
+        customerID,
+        name,
+        email,
+        mobile: country + " " + mobile,
+        address,
+        encryptedPassword,
+        preferences
+      });
+
+      document.getElementById('registrationForm').reset();
+    });
+  </script>
+</body>
+</html> 

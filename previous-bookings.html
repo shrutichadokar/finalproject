@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Previous Bookings - A1 Parcel Pvt. Ltd.</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      padding: 2rem;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 1rem;
+    }
+
+    .top-bar button {
+      padding: 0.6rem 1.2rem;
+      font-size: 1rem;
+      font-weight: bold;
+      background-color: #ff9900;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .top-bar button:hover {
+      background-color: #e68a00;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .filters, .pagination, .download {
+      text-align: center;
+      margin: 1rem 0;
+    }
+
+    input, select {
+      padding: 0.5rem;
+      margin: 0.5rem;
+      border: none;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      margin: 0.5rem;
+      background-color: #ffcc00;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 1rem;
+      border-collapse: collapse;
+      background: white;
+      color: black;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 0.8rem;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <button onclick="location.href='customer-dashboard.html'">Back to Dashboard</button>
+  </div>
+
+  <h2>Previous Bookings</h2>
+
+  <div class="filters">
+    <input type="text" id="filterBookingId" placeholder="Booking ID" />
+    <input type="date" id="filterBookingDate" />
+    <select id="filterStatus">
+      <option value="">-- Select Status --</option>
+      <option>New</option>
+      <option>Scheduled</option>
+      <option>Booked</option>
+      <option>In Transit</option>
+      <option>Delivered</option>
+      <option>Cancelled</option>
+    </select>
+    <button onclick="applyFilters()">Apply Filters</button>
+  </div>
+
+  <table id="bookingTable">
+    <thead>
+      <tr>
+        <th>Customer ID</th>
+        <th>Booking ID</th>
+        <th>Booking Date</th>
+        <th>Receiver Name</th>
+        <th>Delivered Address</th>
+        <th>Amount</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <div class="pagination">
+    <button onclick="prevPage()">Prev</button>
+    <span id="pageInfo"></span>
+    <button onclick="nextPage()">Next</button>
+  </div>
+
+  <div class="download" id="downloadBtnContainer">
+    <button onclick="downloadAsXLS()">Download XLS</button>
+    <button onclick="downloadAsPDF()">Download PDF</button>
+  </div>
+
+  <script>
+    const bookings = [];
+    for (let i = 1; i <= 25; i++) {
+      bookings.push({
+        customerId: "CUST" + String(i).padStart(4, '0'),
+        bookingId: "BKG" + (1000 + i),
+        bookingDate: "2025-07-" + String((i % 30 + 1)).padStart(2, '0'),
+        receiverName: "Receiver " + i,
+        deliveredAddress: "Address " + i,
+        amount: "₹" + (100 + i),
+        status: i % 2 === 0 ? "Delivered" : "In Transit"
+      });
+    }
+
+    let currentPage = 1;
+    const recordsPerPage = 10;
+
+    function paginate(data) {
+      const start = (currentPage - 1) * recordsPerPage;
+      return data.slice(start, start + recordsPerPage);
+    }
+
+    function displayTable(data) {
+      const tbody = document.getElementById("tableBody");
+      tbody.innerHTML = "";
+      const paginatedData = paginate(data);
+
+      paginatedData.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${row.customerId}</td>
+          <td>${row.bookingId}</td>
+          <td>${row.bookingDate}</td>
+          <td>${row.receiverName}</td>
+          <td>${row.deliveredAddress}</td>
+          <td>${row.amount}</td>
+          <td>${row.status}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById("pageInfo").textContent = `Page ${currentPage} of ${Math.ceil(data.length / recordsPerPage)}`;
+
+      document.getElementById("downloadBtnContainer").style.display = data.length > 10 ? "block" : "none";
+    }
+
+    function applyFilters() {
+      const idFilter = document.getElementById("filterBookingId").value.trim().toLowerCase();
+      const dateFilter = document.getElementById("filterBookingDate").value;
+      const statusFilter = document.getElementById("filterStatus").value;
+
+      const filtered = bookings.filter(row =>
+        (idFilter === "" || row.bookingId.toLowerCase().includes(idFilter)) &&
+        (dateFilter === "" || row.bookingDate === dateFilter) &&
+        (statusFilter === "" || row.status === statusFilter)
+      );
+
+      currentPage = 1;
+      displayTable(filtered);
+    }
+
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        applyFilters();
+      }
+    }
+
+    function nextPage() {
+      const total = bookings.filter(row =>
+        (document.getElementById("filterBookingId").value === "" || row.bookingId.includes(document.getElementById("filterBookingId").value)) &&
+        (document.getElementById("filterBookingDate").value === "" || row.bookingDate === document.getElementById("filterBookingDate").value) &&
+        (document.getElementById("filterStatus").value === "" || row.status === document.getElementById("filterStatus").value)
+      ).length;
+
+      if (currentPage < Math.ceil(total / recordsPerPage)) {
+        currentPage++;
+        applyFilters();
+      }
+    }
+
+    function downloadAsXLS() {
+      let csv = "Customer ID,Booking ID,Booking Date,Receiver Name,Delivered Address,Amount,Status\n";
+      bookings.forEach(row => {
+        csv += `${row.customerId},${row.bookingId},${row.bookingDate},${row.receiverName},${row.deliveredAddress},${row.amount},${row.status}\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "PreviousBookings.xls";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function downloadAsPDF() {
+      const win = window.open('', '', 'height=700,width=900');
+      win.document.write('<html><head><title>Previous Bookings PDF</title></head><body>');
+      win.document.write('<h2>Previous Booking Details</h2><table border="1" cellpadding="5"><tr><th>Customer ID</th><th>Booking ID</th><th>Booking Date</th><th>Receiver Name</th><th>Delivered Address</th><th>Amount</th><th>Status</th></tr>');
+
+      bookings.forEach(row => {
+        win.document.write(`<tr><td>${row.customerId}</td><td>${row.bookingId}</td><td>${row.bookingDate}</td><td>${row.receiverName}</td><td>${row.deliveredAddress}</td><td>${row.amount}</td><td>${row.status}</td></tr>`);
+      });
+
+      win.document.write('</table></body></html>');
+      win.document.close();
+      win.print();
+    }
+
+    // Initial display
+    applyFilters();
+  </script>
+
+</body>
+</html>
